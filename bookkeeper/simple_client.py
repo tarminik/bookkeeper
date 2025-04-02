@@ -2,13 +2,24 @@
 Простой тестовый скрипт для терминала
 """
 
+import os
+import pathlib
+
 from bookkeeper.models.category import Category
 from bookkeeper.models.expense import Expense
-from bookkeeper.repository.memory_repository import MemoryRepository
+from bookkeeper.repository.sqlite_repository import SqliteRepository
 from bookkeeper.utils import read_tree
 
-cat_repo = MemoryRepository[Category]()
-exp_repo = MemoryRepository[Expense]()
+# Создаем директорию для базы данных, если она не существует
+data_dir = pathlib.Path.home() / '.bookkeeper'
+os.makedirs(data_dir, exist_ok=True)
+
+# Путь к файлу базы данных
+db_path = data_dir / 'bookkeeper.db'
+
+# Создаем репозитории для категорий и расходов
+cat_repo = SqliteRepository(str(db_path), Category)
+exp_repo = SqliteRepository(str(db_path), Expense)
 
 cats = '''
 продукты
